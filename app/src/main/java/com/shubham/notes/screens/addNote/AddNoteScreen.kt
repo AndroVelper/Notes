@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.shubham.notes.navigation.MyNavigation
+import com.shubham.notes.navigation.NavDestinations
 
 @Composable
 fun AddNoteScreen(navController: NavController) {
@@ -20,7 +21,7 @@ fun AddNoteScreen(navController: NavController) {
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                // Navigate to Screen2 when the FAB is clicked
+                navController.popBackStack()
             }) {
                 Icon(imageVector = Icons.Rounded.Refresh, contentDescription = "Add Button")
             }
