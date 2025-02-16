@@ -1,9 +1,10 @@
-package com.shubham.notes.screens.dashboard
+package com.shubham.notes.screens.addNote
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -11,24 +12,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import com.shubham.notes.navigation.NavDestinations
-
+import com.shubham.notes.navigation.MyNavigation
 
 @Composable
-fun DashboardScreen(navController: NavController) {
+fun AddNoteScreen(navController: NavController) {
 
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                navController.navigate(NavDestinations.AddNoteScreen.route)
+                // Navigate to Screen2 when the FAB is clicked
             }) {
-                Icon(imageVector = Icons.Rounded.Add, contentDescription = "Add Button")
+                Icon(imageVector = Icons.Rounded.Refresh, contentDescription = "Add Button")
             }
         }
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
-            Text(text = "screen 1")
+            Text(text = "screen 2")
         }
     }
 }
-
