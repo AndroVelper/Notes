@@ -2,6 +2,7 @@ package com.shubham.notes.screens.dashboard
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,6 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,13 +43,14 @@ import com.shubham.notes.screens.common.Spacer
 fun DashboardScreen(navController: NavController) {
     val title = remember { mutableStateOf("") }
 
-    val items: MutableList<String> = mutableListOf("Hello", "Shubham", "Sharma",
+    val items: MutableList<String> = mutableListOf(
+        "Hello", "Shubham", "Sharma",
         "Hello", "Shubham", "Sharma",
         "Hello", "Shubham", "Sharma",
         "Hello", "Shubham", "Sharma",
         "Hello", "Shubham", "Sharma",
         "Hello", "Shubham", "Sharma"
-        )
+    )
 
     Scaffold(
         floatingActionButton = {
@@ -125,30 +128,52 @@ fun DashboardScreen(navController: NavController) {
                 }
             }
             Spacer(height = 10.dp)
-            LazyColumn(modifier = Modifier.padding(start = 20.dp , end = 20.dp , bottom = 20.dp)) {
+            LazyColumn(modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)) {
                 items(items) { item ->
                     MyListItem(item)
                 }
             }
         }
-
-
     }
 }
 
 
 @Composable
 fun MyListItem(item: String) {
-    Box(modifier = Modifier.clip(RoundedCornerShape(10.dp))) {
+    val isVisible = remember { mutableStateOf(false) }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .background(Color.White)
+
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White)
-                .padding(all = 10.dp)
-                .clip(RoundedCornerShape(10.dp))
+                .padding(horizontal = 10.dp, vertical = 10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "ID: ${item}")
+            Text(text = "ID: $item")
+            IconButton(onClick = { isVisible.value = !isVisible.value }) {
+                Icon(
+                    painter = if (isVisible.value) painterResource(id = R.drawable.ic_arrow_up) else painterResource(
+                        id = R.drawable.ic_down
+                    ),
+                    contentDescription = "Down Arrow"
+                )
+            }
         }
+        if (isVisible.value) {
+            Text(
+                text = LoremIpsum(50).values.first(),
+                modifier = Modifier.padding(horizontal = 10.dp),
+                fontSize = 14.sp
+            )
+        }
+
+
     }
     Spacer(height = 10.dp)
 }
