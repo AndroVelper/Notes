@@ -148,7 +148,6 @@ fun MyListItem(item: String) {
                 .clip(RoundedCornerShape(10.dp))
         ) {
             Text(text = "ID: ${item}")
-            IconButton(modifier = Modifier.align(Alignment.CenterEnd) , onClick = {}) { }
         }
     }
     Spacer(height = 10.dp)
