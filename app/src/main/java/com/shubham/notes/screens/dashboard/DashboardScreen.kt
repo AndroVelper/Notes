@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
@@ -32,11 +34,20 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.shubham.notes.R
 import com.shubham.notes.navigation.NavDestinations
+import com.shubham.notes.screens.common.Spacer
 
 
 @Composable
 fun DashboardScreen(navController: NavController) {
     val title = remember { mutableStateOf("") }
+
+    val items: MutableList<String> = mutableListOf("Hello", "Shubham", "Sharma",
+        "Hello", "Shubham", "Sharma",
+        "Hello", "Shubham", "Sharma",
+        "Hello", "Shubham", "Sharma",
+        "Hello", "Shubham", "Sharma",
+        "Hello", "Shubham", "Sharma"
+        )
 
     Scaffold(
         floatingActionButton = {
@@ -113,8 +124,32 @@ fun DashboardScreen(navController: NavController) {
 
                 }
             }
-
+            Spacer(height = 10.dp)
+            LazyColumn(modifier = Modifier.padding(start = 20.dp , end = 20.dp , bottom = 20.dp)) {
+                items(items) { item ->
+                    MyListItem(item)
+                }
+            }
         }
+
+
     }
 }
 
+
+@Composable
+fun MyListItem(item: String) {
+    Box(modifier = Modifier.clip(RoundedCornerShape(10.dp))) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White)
+                .padding(all = 10.dp)
+                .clip(RoundedCornerShape(10.dp))
+        ) {
+            Text(text = "ID: ${item}")
+            IconButton(modifier = Modifier.align(Alignment.CenterEnd) , onClick = {}) { }
+        }
+    }
+    Spacer(height = 10.dp)
+}
