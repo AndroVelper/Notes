@@ -17,10 +17,10 @@ interface NoteDao {
      * it found the entity already there then it will update that entity
      *
      * @param note : the note which we want to insert or update
-     * @return true -> if inserted successfully otherwise false
+     * @return row id if success and -1 if any failure occur.
      * **/
     @Upsert
-    suspend fun insertNode(note: NoteEntity)
+    suspend fun insertNode(note: NoteEntity) : Long
 
 
     /**

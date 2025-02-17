@@ -172,8 +172,6 @@ fun MyListItem(item: String) {
                 fontSize = 14.sp
             )
         }
-
-
     }
     Spacer(height = 10.dp)
 }

@@ -25,15 +25,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.shubham.notes.database.DataBaseEvents
+import com.shubham.notes.database.NoteEntity
 import com.shubham.notes.screens.common.GetTextFields
 import com.shubham.notes.screens.common.ProvideTextHeadings
 import com.shubham.notes.screens.common.Spacer
+import com.shubham.notes.screens.dashboard.DashboardViewModel
+import com.shubham.notes.utils.ResponseManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
+import java.util.Date
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun AddNoteScreen(navController: NavController) {
-
     val title = remember { mutableStateOf("") }
     val desc = remember { mutableStateOf("") }
+    val viewModel: DashboardViewModel = koinViewModel()
 
     Scaffold { innerPadding ->
         Box(
@@ -88,7 +98,11 @@ fun AddNoteScreen(navController: NavController) {
                     )
                     Spacer(height = 40.dp)
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            CoroutineScope(Dispatchers.Main).launch {
+                                submitTheData(title.value, desc.value, viewModel, navController)
+                            }
+                        },
                         modifier = Modifier
                             .fillMaxWidth(),
                         shape = RoundedCornerShape(10.dp)
@@ -102,12 +116,39 @@ fun AddNoteScreen(navController: NavController) {
 
                     }
                 }
-
             }
-
-
         }
     }
 
+
+}
+
+private suspend fun submitTheData(
+    title: String,
+    desc: String,
+    viewModel: DashboardViewModel,
+    navController: NavController
+) {
+
+    if (title.trim().isEmpty() || desc.trim().isEmpty()) {
+        return
+    }
+
+    viewModel.fireEvent(
+        DataBaseEvents.UpsertDataEvent(
+            NoteEntity(
+                title = title,
+                content = desc,
+                timestamp = Date().time.milliseconds.inWholeMilliseconds
+            )
+        )
+    )
+    viewModel.events.collect {
+        if (it !is ResponseManager.OnSuccess) {
+            return@collect
+        }
+
+        navController.popBackStack()
+    }
 
 }

@@ -5,6 +5,7 @@ import com.shubham.notes.di.commonModules
 import com.shubham.notes.di.dashboardModule
 import com.shubham.notes.di.databaseModule
 import com.shubham.notes.di.repositoryModule
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
 class MyApplication : Application() {
@@ -20,7 +21,8 @@ class MyApplication : Application() {
         super.onCreate()
         // the first three module be in same hierarchy rest hierarchy can be changed.
         startKoin {
-            modules(commonModules, databaseModule, repositoryModule, dashboardModule)
+            androidContext(this@MyApplication)
+            modules( databaseModule, repositoryModule, dashboardModule)
         }
     }
 }

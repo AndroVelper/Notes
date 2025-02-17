@@ -1,6 +1,6 @@
 package com.shubham.notes.utils
 
-sealed class ResponseManager<T> {
+sealed class ResponseManager<out T> {
     data class OnError<T>(val data: T) : ResponseManager<T>()
     data class OnSuccess<T>(val data: T) : ResponseManager<T>()
     data class IsLoading(val isLoading: Boolean) : ResponseManager<Nothing>()
