@@ -21,6 +21,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -29,28 +31,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.shubham.notes.R
+import com.shubham.notes.database.NoteEntity
 import com.shubham.notes.navigation.NavDestinations
 import com.shubham.notes.screens.common.Spacer
+import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
 fun DashboardScreen(navController: NavController) {
     val title = remember { mutableStateOf("") }
-
-    val items: MutableList<String> = mutableListOf(
-        "Hello", "Shubham", "Sharma",
-        "Hello", "Shubham", "Sharma",
-        "Hello", "Shubham", "Sharma",
-        "Hello", "Shubham", "Sharma",
-        "Hello", "Shubham", "Sharma",
-        "Hello", "Shubham", "Sharma"
-    )
+    val viewModel: DashboardViewModel = koinViewModel()
+    val notes by viewModel.notes.collectAsState()
 
     Scaffold(
         floatingActionButton = {
@@ -129,7 +125,7 @@ fun DashboardScreen(navController: NavController) {
             }
             Spacer(height = 10.dp)
             LazyColumn(modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)) {
-                items(items) { item ->
+                items(notes) { item ->
                     MyListItem(item)
                 }
             }
@@ -139,7 +135,7 @@ fun DashboardScreen(navController: NavController) {
 
 
 @Composable
-fun MyListItem(item: String) {
+fun MyListItem(item: NoteEntity) {
     val isVisible = remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
@@ -155,7 +151,7 @@ fun MyListItem(item: String) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "ID: $item")
+            Text(text = item.title, fontSize = 18.sp, color = Color.Black)
             IconButton(onClick = { isVisible.value = !isVisible.value }) {
                 Icon(
                     painter = if (isVisible.value) painterResource(id = R.drawable.ic_arrow_up) else painterResource(
@@ -167,7 +163,7 @@ fun MyListItem(item: String) {
         }
         if (isVisible.value) {
             Text(
-                text = LoremIpsum(50).values.first(),
+                text = item.content,
                 modifier = Modifier.padding(horizontal = 10.dp),
                 fontSize = 14.sp
             )

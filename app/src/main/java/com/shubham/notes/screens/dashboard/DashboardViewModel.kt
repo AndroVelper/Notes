@@ -1,6 +1,5 @@
 package com.shubham.notes.screens.dashboard
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.shubham.notes.database.DataBaseEvents
@@ -8,17 +7,18 @@ import com.shubham.notes.database.NoteEntity
 import com.shubham.notes.repo.Repository
 import com.shubham.notes.utils.ResponseManager
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.future.asCompletableFuture
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class DashboardViewModel(private val repository: Repository) : ViewModel() {
-    private val _events : MutableSharedFlow<ResponseManager<Any>> = MutableSharedFlow()
+    private val _events: MutableSharedFlow<ResponseManager<Any>> = MutableSharedFlow()
     val events: SharedFlow<ResponseManager<Any>> = _events
 
 
-    private val _notes = MutableLiveData<List<NoteEntity>>()
-    val notes get() = _notes
+    private val _notes = MutableStateFlow<List<NoteEntity>>(emptyList())
+    val notes: StateFlow<List<NoteEntity>> = _notes
 
 
     init {
@@ -103,7 +103,12 @@ class DashboardViewModel(private val repository: Repository) : ViewModel() {
 
     private fun getAllNotes() {
         viewModelScope.launch {
-            repository.getAllNotes()
+            _events.emit(ResponseManager.IsLoading(true))
+            repository.getAllNotes().collect {
+                _notes.value = it
+            }.also {
+                _events.emit(ResponseManager.OnSuccess(true))
+            }
         }
     }
 

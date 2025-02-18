@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
+import kotlinx.coroutines.flow.Flow
 
 
 /**
@@ -51,7 +52,7 @@ interface NoteDao {
      * Get all the notes from the database and return it
      **/
     @Query("SELECT * FROM NotesDB")
-    suspend fun getAllNotes(): List<NoteEntity>
+     fun getAllNotes(): Flow<List<NoteEntity>>
 
     /**
      * Get the specific note from the database and return that node.
