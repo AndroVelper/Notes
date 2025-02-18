@@ -2,6 +2,8 @@ package com.shubham.notes.database
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
@@ -20,7 +22,7 @@ interface NoteDao {
      * @param note : the note which we want to insert or update
      * @return row id if success and -1 if any failure occur.
      * **/
-    @Upsert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNode(note: NoteEntity) : Long
 
 
@@ -45,7 +47,7 @@ interface NoteDao {
      * @return true if the note is deleted otherwise not
      **/
     @Query("DELETE FROM NotesDB WHERE id = :noteId")
-    suspend fun deleteNoteBasedOnId(noteId: Int)
+    suspend fun deleteNoteBasedOnId(noteId: Int) :Int
 
 
     /**

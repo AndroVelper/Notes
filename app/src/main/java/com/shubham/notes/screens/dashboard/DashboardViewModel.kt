@@ -17,8 +17,8 @@ class DashboardViewModel(private val repository: Repository) : ViewModel() {
     val events: SharedFlow<ResponseManager<Any>> = _events
 
 
-    private val _notes = MutableStateFlow<List<NoteEntity>>(emptyList())
-    val notes: StateFlow<List<NoteEntity>> = _notes
+    private val _notes = MutableStateFlow<MutableList<NoteEntity>>(mutableListOf())
+    val notes: StateFlow<MutableList<NoteEntity>> = _notes
 
 
     init {
@@ -28,7 +28,9 @@ class DashboardViewModel(private val repository: Repository) : ViewModel() {
     fun fireEvent(event: DataBaseEvents) {
         when (event) {
             is DataBaseEvents.UpsertDataEvent -> {
-                upsertData(event.data)
+                viewModelScope.launch {
+                    upsertData(event.data)
+                }
             }
 
             is DataBaseEvents.ClearDataBase -> {
@@ -65,15 +67,13 @@ class DashboardViewModel(private val repository: Repository) : ViewModel() {
     /**
      * if the result is > 0 means success else failure
      * **/
-    private fun upsertData(data: NoteEntity) {
-        viewModelScope.launch {
-            _events.emit(ResponseManager.IsLoading(true))
-            val result = repository.upsertData(data)
-            if (result >= 0) {
-                _events.emit(ResponseManager.OnSuccess(result))
-            } else {
-                _events.emit(ResponseManager.OnError(result))
-            }
+    private suspend fun upsertData(data: NoteEntity) {
+        _events.emit(ResponseManager.IsLoading(true))
+        val result = repository.upsertData(data)
+        if (result >= 0) {
+            _events.emit(ResponseManager.OnSuccess(result))
+        } else {
+            _events.emit(ResponseManager.OnError(result))
         }
     }
 
@@ -105,7 +105,7 @@ class DashboardViewModel(private val repository: Repository) : ViewModel() {
         viewModelScope.launch {
             _events.emit(ResponseManager.IsLoading(true))
             repository.getAllNotes().collect {
-                _notes.value = it
+                _notes.value = it.toMutableList()
             }.also {
                 _events.emit(ResponseManager.OnSuccess(true))
             }
@@ -113,7 +113,14 @@ class DashboardViewModel(private val repository: Repository) : ViewModel() {
     }
 
     private fun deleteDataBasedOnId(id: Int) {
-        viewModelScope.launch { repository.deleteDataBasedOnId(id) }
+        viewModelScope.launch {
+            val result = repository.deleteDataBasedOnId(id)
+            if (result > 0) {
+                _notes.value = _notes.value.filter { it.id != id }.toMutableList()
+            } else {
+                _events.emit(ResponseManager.OnError("Failure occur on Deletion"))
+            }
+        }
     }
 
     private fun deleteNoteFromDB(note: NoteEntity) {

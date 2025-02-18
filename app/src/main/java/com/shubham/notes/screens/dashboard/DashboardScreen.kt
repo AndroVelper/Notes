@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -15,11 +16,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SwipeToDismiss
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -36,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.shubham.notes.R
+import com.shubham.notes.database.DataBaseEvents
 import com.shubham.notes.database.NoteEntity
 import com.shubham.notes.navigation.NavDestinations
 import com.shubham.notes.screens.common.Spacer
@@ -126,10 +132,53 @@ fun DashboardScreen(navController: NavController) {
             Spacer(height = 10.dp)
             LazyColumn(modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)) {
                 items(notes) { item ->
-                    MyListItem(item)
+                    MyListItem(item) {
+                        viewModel.fireEvent(DataBaseEvents.DeleteDataBasedOnIdEvent(item.id))
+                    }
+                    Spacer(height = 10.dp)
                 }
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MyListItem(item: NoteEntity, onDelete: (NoteEntity) -> Unit) {
+    val dismissState = rememberSwipeToDismissBoxState(
+        confirmValueChange = { dismissValue ->
+            if (dismissValue == SwipeToDismissBoxValue.EndToStart) {
+                onDelete(item) // Remove note when swiped
+                true
+            } else false
+        }
+    )
+    if (dismissState.currentValue != SwipeToDismissBoxValue.EndToStart) {
+
+        SwipeToDismiss(
+            state = dismissState,
+            directions = setOf(SwipeToDismissBoxValue.EndToStart),
+            background = {
+                val color = when (dismissState.dismissDirection) {
+                    SwipeToDismissBoxValue.EndToStart -> Color.Red
+                    else -> Color.Transparent
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(color)
+                        .padding(16.dp),
+                    contentAlignment = Alignment.CenterEnd
+                ) {
+                    Text("Delete", color = Color.White)
+                }
+            },
+            dismissContent = {
+
+                MyListItem(item)
+            }
+        )
     }
 }
 
@@ -169,5 +218,5 @@ fun MyListItem(item: NoteEntity) {
             )
         }
     }
-    Spacer(height = 10.dp)
+
 }

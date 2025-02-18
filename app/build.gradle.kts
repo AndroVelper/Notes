@@ -84,4 +84,8 @@ dependencies {
 
     // koin
     implementation(libs.koin.androidx.compose)
+
+    // swipe
+    implementation(libs.accompanist.swiperefresh)
+
 }

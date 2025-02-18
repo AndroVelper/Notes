@@ -1,4 +1,5 @@
 [versions]
+accompanistSwiperefresh = "0.30.1"
 agp = "8.5.0"
 koinAndroidxCompose = "3.5.0"
 koinAndroidxComposeViewmodel = "3.5.0"
@@ -14,6 +15,7 @@ navigationCompose = "2.8.7"
 roomKtx = "2.6.1"
 
 [libraries]
+accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanistSwiperefresh" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
