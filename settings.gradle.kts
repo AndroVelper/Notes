@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "ComposeNoteApplication"
 include(":app")
- 
+include(":authentication")
